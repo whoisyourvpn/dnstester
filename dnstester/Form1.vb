@@ -40,7 +40,9 @@ Public Class Form1
         Public Property Server As String
         Public Property Name As String
         Public Property AverageSpeed As Double
+        Public Property DateTimeGroup As DateTime
     End Class
+
 
 
     Private Sub btnQuery_Click(sender As Object, e As EventArgs) Handles btnQuery.Click
@@ -93,7 +95,8 @@ Public Class Form1
         Dim newResult As New DnsTestResult With {
     .Server = dnsServer,
     .Name = serverName,
-    .AverageSpeed = averageTime
+    .AverageSpeed = averageTime,
+    .DateTimeGroup = DateTime.Now
 }
 
         Dim currentResults As List(Of DnsTestResult) = LoadResults()
@@ -137,10 +140,22 @@ Public Class Form1
                 Next
             Next
 
+            ' Calculate the average time for successful resolutions
+            Dim averageTime As Double = totalTime / totalSuccessfulResolutions
+            Dim newResult As New DnsTestResult With {
+            .Server = dnsServer,
+            .Name = serverName,
+            .AverageSpeed = averageTime,
+            .DateTimeGroup = DateTime.Now
+        }
+
+            Dim currentResults As List(Of DnsTestResult) = LoadResults()
+            currentResults.Add(newResult)
+            SaveResults(currentResults)
+
             ' Update the user with the test result for the DNS server
             If totalSuccessfulResolutions > 0 Then
-                Dim averageTime As Double = totalTime / totalSuccessfulResolutions ' Calculate average time for successful resolutions
-                Dim averageTimeString As String = $"{averageTime:0.##}ms"
+                Dim averageTimeString As String = $"{averageTime:0.##}ms" ' Format the already calculated averageTime
 
                 Dim totalCharsForDots = estimatedMaxLengthWithoutMs - label.Length
                 Dim dotsString = New String("."c, totalCharsForDots)
@@ -152,6 +167,7 @@ Public Class Form1
             End If
         Next
     End Sub
+
 
     Public Sub SaveResults(results As List(Of DnsTestResult))
         Dim serializer As New Xml.Serialization.XmlSerializer(GetType(List(Of DnsTestResult)))
@@ -176,13 +192,14 @@ Public Class Form1
             Dim results As List(Of DnsTestResult) = LoadResults()
             rtbResultsLog.Clear()
             For Each result In results
-                Dim dtg As String = DateTime.Now.ToString("MM/dd/yy (HHmm)")
+                Dim dtg As String = result.DateTimeGroup.ToString("MM/dd/yy (HHmm)")
                 rtbResultsLog.AppendText($"{dtg} {result.Server} ({result.Name}): {result.AverageSpeed:0.##}ms{Environment.NewLine}")
             Next
         Catch ex As Exception
             MessageBox.Show("Error displaying results: " & ex.Message)
         End Try
     End Sub
+
 
 
     Private Sub TabControl1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles Home.SelectedIndexChanged
