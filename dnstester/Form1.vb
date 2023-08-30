@@ -172,12 +172,18 @@ Public Class Form1
     End Function
 
     Public Sub DisplayResults()
-        Dim results As List(Of DnsTestResult) = LoadResults()
-        rtbResultsLog.Clear()
-        For Each result In results
-            rtbResultsLog.AppendText($"{result.Server} ({result.Name}): {result.AverageSpeed:0.##}ms{Environment.NewLine}")
-        Next
+        Try
+            Dim results As List(Of DnsTestResult) = LoadResults()
+            rtbResultsLog.Clear()
+            For Each result In results
+                Dim dtg As String = DateTime.Now.ToString("MM/dd/yy (HHmm)")
+                rtbResultsLog.AppendText($"{dtg} {result.Server} ({result.Name}): {result.AverageSpeed:0.##}ms{Environment.NewLine}")
+            Next
+        Catch ex As Exception
+            MessageBox.Show("Error displaying results: " & ex.Message)
+        End Try
     End Sub
+
 
     Private Sub TabControl1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles Home.SelectedIndexChanged
         If Home.SelectedIndex = 1 Then ' Assuming the second tab's index is 1 (0-based index)
