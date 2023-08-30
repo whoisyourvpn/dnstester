@@ -208,6 +208,16 @@ Public Class Form1
         End If
     End Sub
 
+    Private Sub btnClearLog_Click(sender As Object, e As EventArgs) Handles btnClearLog.Click
+        ' Check if the file exists before attempting to delete
+        If File.Exists("results.xml") Then
+            File.Delete("results.xml")
+        End If
 
+        ' Clear the results display
+        rtbResultsLog.Clear()
+
+        MessageBox.Show("Log has been cleared successfully!")
+    End Sub
 
 End Class

@@ -31,6 +31,7 @@ Partial Class Form1
         lblDnsServer = New Label()
         Results = New TabPage()
         rtbResultsLog = New RichTextBox()
+        btnClearLog = New Button()
         Home.SuspendLayout()
         TabPage1.SuspendLayout()
         Results.SuspendLayout()
@@ -43,7 +44,7 @@ Partial Class Form1
         Home.Location = New Point(0, 0)
         Home.Name = "Home"
         Home.SelectedIndex = 0
-        Home.Size = New Size(621, 529)
+        Home.Size = New Size(621, 509)
         Home.TabIndex = 6
         ' 
         ' TabPage1
@@ -107,11 +108,12 @@ Partial Class Form1
         ' 
         ' Results
         ' 
+        Results.Controls.Add(btnClearLog)
         Results.Controls.Add(rtbResultsLog)
         Results.Location = New Point(4, 34)
         Results.Name = "Results"
         Results.Padding = New Padding(3)
-        Results.Size = New Size(613, 491)
+        Results.Size = New Size(613, 471)
         Results.TabIndex = 1
         Results.Text = "Results"
         Results.UseVisualStyleBackColor = True
@@ -121,9 +123,18 @@ Partial Class Form1
         rtbResultsLog.Location = New Point(8, 6)
         rtbResultsLog.Name = "rtbResultsLog"
         rtbResultsLog.ScrollBars = RichTextBoxScrollBars.Vertical
-        rtbResultsLog.Size = New Size(599, 479)
+        rtbResultsLog.Size = New Size(599, 419)
         rtbResultsLog.TabIndex = 0
         rtbResultsLog.Text = ""
+        ' 
+        ' btnClearLog
+        ' 
+        btnClearLog.Location = New Point(8, 431)
+        btnClearLog.Name = "btnClearLog"
+        btnClearLog.Size = New Size(112, 34)
+        btnClearLog.TabIndex = 1
+        btnClearLog.Text = "Clear logs"
+        btnClearLog.UseVisualStyleBackColor = True
         ' 
         ' Form1
         ' 
@@ -148,4 +159,5 @@ Partial Class Form1
     Friend WithEvents cmbDnsServers As ComboBox
     Friend WithEvents lblDnsServer As Label
     Friend WithEvents rtbResultsLog As RichTextBox
+    Friend WithEvents btnClearLog As Button
 End Class
