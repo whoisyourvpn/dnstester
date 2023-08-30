@@ -1,4 +1,4 @@
-﻿Imports System.Net
+Imports System.Net
 Imports DnsClient
 Imports System.Diagnostics ' Required for Stopwatch
 Imports System.IO
