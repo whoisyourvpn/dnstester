@@ -105,7 +105,7 @@ Public Class Form1
 
     End Sub
 
-    Private Sub btnTestAll_Click(sender As Object, e As EventArgs)
+    Private Sub btnTestAll_Click(sender As Object, e As EventArgs) Handles btnTestAll.Click
         txtOutput.Clear()
 
         ' Estimation of the maximum width for the speed results.
@@ -157,11 +157,11 @@ Public Class Form1
             If totalSuccessfulResolutions > 0 Then
                 Dim averageTimeString As String = $"{averageTime:0.##}ms" ' Format the already calculated averageTime
 
-                Dim totalCharsForDots = estimatedMaxLengthWithoutMs - label.Length
+                Dim totalCharsForDots = Math.Max(0, estimatedMaxLengthWithoutMs - label.Length)
                 Dim dotsString = New String("."c, totalCharsForDots)
                 txtOutput.AppendText($"{label}{dotsString}{averageTimeString}{Environment.NewLine}")
             Else
-                Dim totalCharsForDots = estimatedMaxLengthWithoutMs - label.Length
+                Dim totalCharsForDots = Math.Max(0, estimatedMaxLengthWithoutMs - label.Length)
                 Dim dotsString = New String("."c, totalCharsForDots)
                 txtOutput.AppendText($"{label}{dotsString}Timed out{Environment.NewLine}")
             End If
