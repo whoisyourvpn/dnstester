@@ -1,6 +1,9 @@
 Imports System.Net
 Imports DnsClient
 Imports System.Diagnostics ' Required for Stopwatch
+Imports System.IO
+Imports System.Xml.Serialization
+
 
 Public Class Form1
 
@@ -33,6 +36,13 @@ Public Class Form1
         Next
     End Sub
 
+    Public Class DnsTestResult
+        Public Property Server As String
+        Public Property Name As String
+        Public Property AverageSpeed As Double
+    End Class
+
+
     Private Sub btnQuery_Click(sender As Object, e As EventArgs) Handles btnQuery.Click
         Dim selectedItem As String = cmbDnsServers.Text.Trim()
         If String.IsNullOrEmpty(selectedItem) Then
@@ -42,6 +52,8 @@ Public Class Form1
 
         ' Extract just the IP from the selected item for the DNS lookup
         Dim dnsServer As String = selectedItem.Split(" ")(0)
+
+        Dim serverName As String = dnsServers(dnsServer)
 
         Dim lookupClient As New LookupClient(IPAddress.Parse(dnsServer))
         txtOutput.Clear()
@@ -77,9 +89,20 @@ Public Class Form1
 
         Dim averageTime As Double = totalTime / totalSuccessfulResolutions ' Calculate average time for successful resolutions
         txtOutput.AppendText($"Average speed: {averageTime:0.##}ms{Environment.NewLine}")
+
+        Dim newResult As New DnsTestResult With {
+    .Server = dnsServer,
+    .Name = serverName,
+    .AverageSpeed = averageTime
+}
+
+        Dim currentResults As List(Of DnsTestResult) = LoadResults()
+        currentResults.Add(newResult)
+        SaveResults(currentResults)
+
     End Sub
 
-    Private Sub btnTestAll_Click(sender As Object, e As EventArgs) Handles btnTestAll.Click
+    Private Sub btnTestAll_Click(sender As Object, e As EventArgs)
         txtOutput.Clear()
 
         ' Estimation of the maximum width for the speed results.
@@ -128,6 +151,38 @@ Public Class Form1
                 txtOutput.AppendText($"{label}{dotsString}Timed out{Environment.NewLine}")
             End If
         Next
+    End Sub
+
+    Public Sub SaveResults(results As List(Of DnsTestResult))
+        Dim serializer As New Xml.Serialization.XmlSerializer(GetType(List(Of DnsTestResult)))
+        Using writer As New StreamWriter("results.xml")
+            serializer.Serialize(writer, results)
+        End Using
+    End Sub
+
+    Public Function LoadResults() As List(Of DnsTestResult)
+        If File.Exists("results.xml") Then
+            Dim serializer As New Xml.Serialization.XmlSerializer(GetType(List(Of DnsTestResult)))
+            Using reader As New StreamReader("results.xml")
+                Return CType(serializer.Deserialize(reader), List(Of DnsTestResult))
+            End Using
+        Else
+            Return New List(Of DnsTestResult)()
+        End If
+    End Function
+
+    Public Sub DisplayResults()
+        Dim results As List(Of DnsTestResult) = LoadResults()
+        rtbResultsLog.Clear()
+        For Each result In results
+            rtbResultsLog.AppendText($"{result.Server} ({result.Name}): {result.AverageSpeed}ms{Environment.NewLine}")
+        Next
+    End Sub
+
+    Private Sub TabControl1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles TabControl1.SelectedIndexChanged
+        If TabControl1.SelectedIndex = 1 Then ' Assuming the second tab's index is 1 (0-based index)
+            DisplayResults()
+        End If
     End Sub
 
 
