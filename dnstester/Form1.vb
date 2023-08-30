@@ -13,7 +13,12 @@ Public Class Form1
         "facebook.com",
         "twitter.com",
         "microsoft.com",
-        "apple.com"
+        "apple.com",
+        "netflix.com",
+        "yahoo.com",
+        "reddit.com",
+        "twitter.com",
+        "msn.com"
     }
 
     ' Dictionary of DNS servers and their associated names
@@ -59,6 +64,7 @@ Public Class Form1
 
         Dim lookupClient As New LookupClient(IPAddress.Parse(dnsServer))
         txtOutput.Clear()
+        Application.DoEvents()
 
         Dim totalSuccessfulResolutions As Integer = 0
         Dim totalTime As Double = 0
